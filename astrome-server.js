@@ -4,6 +4,7 @@ const path = require('path');
 const readline = require("readline");
 const portNumber = 5001;
 const { MongoClient } = require('mongodb');
+const https = require('https');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -14,13 +15,55 @@ const uri = process.env.MONGO_CONNECTION_STRING
 const client = new MongoClient(uri);
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/home', (req, res) => {
-    res.render('home', { username: req.query.user });
+app.get('/home', async (req, res) => {
+    const username = req.query.user;
+    console.log(username);
+
+    try {
+        const objectIDResponse = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=Paintings');
+        const objectIDData = await objectIDResponse.json();
+        const objectIDs = objectIDData.objectIDs;
+        console.log(objectIDs);
+
+        const random = Math.floor(Math.random() * objectIDs.length);
+        const randomObject = objectIDs[random];
+
+        const artworkResponse = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${randomObject}`);
+        const artworkData = await artworkResponse.json();
+
+        console.log("api response: ", artworkData);
+
+        const imageURL = artworkData.primaryImage;
+        const imageTitle = artworkData.title;
+        const imageMedium = artworkData.medium;
+        const imageType = artworkData.objectName
+        const imageDate = artworkData.objectDate;
+        const artistName = artworkData.artistDisplayName;
+        const artistBio = artworkData.artistDisplayBio;
+
+        const imageDescription = `${imageTitle}, ${imageType} (medium: ${imageMedium}) by ${artistName} (${artistBio}), ${imageDate}`
+        console.log(imageDescription)
+        
+        await client.connect();
+        const database = client.db('ASTRO-ME_DB');
+        const users = database.collection('userData');
+
+        const user = await users.findOne({ username });
+        const isFavorited = user && user.favorites.some(favorite => favorite.imageURL === imageURL);
+
+        res.render('home', { username, imageURL, imageTitle, imageDescription, isFavorited });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error occurred while fetching painting!');
+    } finally {
+        await client.close();
+    }
 });
 
 app.get('/create-account', (req, res) => {
@@ -28,7 +71,7 @@ app.get('/create-account', (req, res) => {
 });
 
 app.post('/login', async (req, res) => {
-    const { username, password} = req.body;
+    const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).send("All fields are required!");
     }
@@ -71,7 +114,8 @@ app.post('/create-account', async (req, res) => {
         const newUser = {
             username,
             email,
-            password
+            password,
+            favorites: []
         };
         await users.insertOne(newUser);
         res.redirect(`/home?user=${newUser.username}`);

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang = "en">
+<head>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
+    <title>Favorites</title>
+</head>
+<body>
+    <h1><%= username %>'s Favorites</h1>
+    <div class = "favorites-gallery">
+        <% favorites.forEach(favorite => { %>
+            <div class = "favorite-item">
+                <img src="<%= favorite.imageUrl %>" alt="<%= favorite.imageTitle %>">
+                <p><%= favorite.imageTitle %> - <%= favorite.date %></p>
+            </div>
+        <% }); %>
+    </div>
+    <a href="/home?user=<%= username %>">Back to Home</a>
+</body>
+</html>
