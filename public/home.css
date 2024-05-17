@@ -10,7 +10,7 @@
 body {
     padding: 20px;
     min-height: 100vh;
-    background: url('home-page-background.jpg');
+    background: url('home-background.jpg');
     background-size: cover;
     background-position: center;
 }
