@@ -58,14 +58,9 @@ body {
 
 .login-container .remember {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     font-size: 15px;
     margin: -15px 0 15px;
-}
-
-.remember label input {
-    accent-color: #fff;
-    margin-right: 3px;
 }
 
 .remember a {
@@ -86,8 +81,8 @@ body {
     border-radius: 40px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
     cursor: pointer;
-    font-size: 15px;
-    color: grey;
+    font-size: 20px;
+    color: black;
     font-weight: 500;
 }
 

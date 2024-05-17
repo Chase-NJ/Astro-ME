@@ -3,16 +3,26 @@
 <head>
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
+    <link href="create-account.css" rel="stylesheet">
     <title>Create Account</title>
 </head>
 <body>
-    <div class = "create-account-container">
-        <h2>Create Your AstroMe Account</h2>
-        <form action = "/create-account" method = "post">
-            <input type = "text" name = "username" placeholder = "Username" required>
-            <input type = "email" name = "email" placeholder = "Email" required>
-            <input type = "password" name = "password" placeholder = "Password" required>
-            <input type = "submit" value = "Create Account">
+    <div class="create-container">
+        <form action="/create-account" method="post">
+            <h1>Create Your AstroMe Account</h1>
+            <div class="input-box">
+                <input type = "text" name = "username" placeholder = "Username" required>
+            </div>
+            <div class="input-box">
+                <input type = "email" name = "email" placeholder = "Email" required>
+            </div>
+            <div class="input-box">
+                <input type = "password" name = "password" placeholder = "Password" required>
+            </div>
+            <button type="submit" class="submit-button">Create Account</button>
+            <div class="return-home">
+                <p>Or <a href="/">Return to Login</a></p>
+            </div>
         </form>
     </div>
 </body>

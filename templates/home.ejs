@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang = "en">
+
 <head>
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
-    <title>Home</title>
+    <link rel="stylesheet" href="/home.css">
+    <title>AstroMe Home</title>
 </head>
+
 <body>
-    <h1>Welcome, <%= username %>!</h1>
+    <div class="user-info-box">
+        <div class="welcome-box"><h1>Welcome, <%= username %>!</h1></div>
+        <div class="home-box"><h1>Home</h1></div>
+        <div class="log-out-box"><a href="/">Log Out</a></div>
+    </div>
+    
 </body>
+
 </html>

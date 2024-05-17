@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    padding: 20px;
+    min-height: 100vh;
+    background: url('home-page-background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.user-info-box {
+    display: flex;
+    padding: 1em;
+    justify-content: space-between;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 15px;
+    width: 100%;
+}
+
+.welcome-box {
+    display: flex;
+    width: 33%;
+    text-align: center;
+    height: 60px;
+    padding: 1em;
+    color: #fff;
+    background: transparent;
+    justify-content: left;
+    align-items: center;
+
+    /* For visualization purposes */
+    /* border: 5px solid #fff;
+    border-radius: 10px; */
+}
+
+.welcome-box h1 {
+    margin: 0;
+    font-size: 30px;
+    margin: 1em;
+    font-weight: 400;
+}
+
+.log-out-box {
+    display: flex;
+    width: 33%;
+    text-align: center;
+    height: 60px;
+    background: transparent;
+    padding: 1em;
+    color: #fff;
+    justify-content: right;
+    align-items: center;
+
+    /* For visualization purposes */
+    /* border: 5px solid #fff;
+    border-radius: 10px; */
+}
+
+.log-out-box h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 400;
+}
+
+.log-out-box a {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 400;
+    text-decoration: none;
+    color: #fff;
+}
+
+.log-out-box a:hover {
+    text-decoration: underline;
+}
+
+.home-box {
+    display: flex;
+    width: 33%;
+    text-align: center;
+    height: 60px;
+    background: transparent;
+    padding: 1em;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+
+    /* For visualization purposes */
+    /* border: 5px solid #fff;
+    border-radius: 10px; */
+}
+
+.home-box h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 400;
+}
