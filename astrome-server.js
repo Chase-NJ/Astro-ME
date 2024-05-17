@@ -26,12 +26,60 @@ app.get('/create-account', (req, res) => {
     res.render('create-account');
 });
 
-app.post('/login', (req, res) => {
-    // Handle login
+app.post('/login', async (req, res) => {
+    const { username, password} = req.body;
+    if (!username || !password) {
+        return res.status(400).send("All fields are required!");
+    }
+
+    try {
+        await client.connect();
+        const database = client.db('ASTRO-ME_DB');
+        const users = database.collection('userData');
+
+        const user = await users.findOne({ $or: [{ username }, { email: username }] });
+        if (!user) {
+            return res.status(401).send("Invalid username or password!");
+        }
+        res.render('home', { username: user.username });
+    } catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).send("Error occurred during login!");
+    } finally {
+        await client.close();
+    }
 });
 
-app.post('/create-account', (req, res) => {
-    // Handle account creation
+app.post('/create-account', async (req, res) => {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+        return res.status(400).send("All fields are required");
+    }
+
+    try {
+        await client.connect();
+        const database = client.db('ASTRO-ME_DB');
+        const users = database.collection('userData');
+
+        const existingUser = await users.findOne({ $or: [{ username }, { email }] });
+        if (existingUser) {
+            return res.status(409).send("User with this username or email already exists!");
+        }
+
+        const newUser = {
+            username,
+            email,
+            password
+        };
+        await users.insertOne(newUser);
+        res.render('home', { username: newUser.username });
+    } catch (error) {
+        console.error("Error creating accoint: ", error);
+        res.status(500).send("An error occurred while creating your account!");
+    } finally {
+        await client.close();
+    }
 });
 
 client.connect().then(() => {
