@@ -6,6 +6,7 @@ const portNumber = 5001;
 const { MongoClient } = require('mongodb');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'templates'));
 
