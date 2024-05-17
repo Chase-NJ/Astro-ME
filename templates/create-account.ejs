@@ -23,6 +23,9 @@
             <div class="return-home">
                 <p>Or <a href="/">Return to Login</a></p>
             </div>
+            <% if (errorMessage) { %>
+                <div class="error-message"><%= errorMessage %></div>
+            <% } %>
         </form>
     </div>
 </body>

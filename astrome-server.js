@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', { errorMessage: null });
 });
 
 app.get('/home', async (req, res) => {
@@ -67,7 +67,7 @@ app.get('/home', async (req, res) => {
 });
 
 app.get('/create-account', (req, res) => {
-    res.render('create-account');
+    res.render('create-account', { errorMessage: null });
 });
 
 app.post('/login', async (req, res) => {
@@ -83,7 +83,7 @@ app.post('/login', async (req, res) => {
 
         const user = await users.findOne({ $or: [{ username }, { email: username }] });
         if (!user) {
-            return res.status(401).send("Invalid username or password!");
+            return res.render('index', { errorMessage: 'Invalid username or password' });
         }
         res.redirect(`/home?user=${user.username}`);
     } catch (error) {
@@ -108,7 +108,7 @@ app.post('/create-account', async (req, res) => {
 
         const existingUser = await users.findOne({ $or: [{ username }, { email }] });
         if (existingUser) {
-            return res.status(409).send("User with this username or email already exists!");
+            return res.render('create-account', { errorMessage: 'User already exists!' });
         }
 
         const newUser = {

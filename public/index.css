@@ -22,10 +22,12 @@ body {
     background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(20px);
-    color: #fff;
+    color: white;
     border-radius: 15px;
     padding: 40px 40px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    justify-content: center;
+    align-items: center;
 }
 
 .login-container h1 {
@@ -48,42 +50,56 @@ body {
     border: 2px solid rgba(255, 255, 255, .2);
     border-radius: 40px;
     font-size: 20px;
-    color: #fff;
+    color: white;
     padding: 20px 40px 20px 20px;
 }
 
 .input-box input::placeholder {
-    color: #fff;
+    color: white;
 }
 
-.login-container .remember {
+.login-container .forgot {
     display: flex;
     justify-content: center;
     font-size: 15px;
-    margin: -15px 0 15px;
+    margin: 15px 0 15px;
 }
 
-.remember a {
-    color: #fff;
+.forgot a {
+    color: white;
     text-decoration: none;
 }
 
-.remember a:hover {
+.forgot a:hover {
     text-decoration: underline;
 }
 
 .login-container .submit-button {
     width: 100%;
     height: 40px;
-    background: #fff;
+    background: rgba(49, 51, 56, .8);
     border: none;
     outline: none;
     border-radius: 40px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
     cursor: pointer;
     font-size: 20px;
-    color: black;
+    color: white;
     font-weight: 500;
+    transition: transform 0.3s ease;
+}
+
+.login-container .submit-button:hover {
+    transform: scale(.95);
+    
+}
+
+.login-container .error-message {
+    margin-top: 5px;
+    margin-bottom: -10px;
+    color: red;
+    text-align: center;
+    justify-content: center;
 }
 
 .login-container .register {
@@ -93,7 +109,7 @@ body {
 }
 
 .register p a {
-    color: #fff;
+    color: white;
     text-decoration: none;
     font-weight: 500;
 }
