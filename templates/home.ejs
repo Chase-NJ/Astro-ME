@@ -31,9 +31,14 @@
             </script>
             <button class="new-image" onclick="renderNewImage()">Next Exhibit</button>
             <form action="/addFavorite" method="post">
+                <input type="hidden" name="username" value="<%= username %>">
+                <input type="hidden" name="imageURL" value="<%= imageURL %>">
+                <input type="hidden" name="imageTitle" value="<%= imageTitle %>">
+                <input type="hidden" name="imageDescription" value="<%= imageDescription %>">
                 <button type="submit" class="favorite">Favorite ♥</button>
             </form>
-            <form action="/displayFavorites" method="post">
+            <form action="/displayFavorites" method="get">
+                <input type="hidden" name="user" value="<%= username %>">
                 <button type="submit" class="favorite">Display Favorites</button>
             </form>
         </div>

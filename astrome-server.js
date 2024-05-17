@@ -54,12 +54,15 @@ app.get('/home', async (req, res) => {
         for (let i = 0; i < objectIDs.length; i += batchSize) {
             const batchIDs = objectIDs.slice(i, i + batchSize);
             const objectDetailsPromises = batchIDs.map(id => 
-                fetchWithRetry(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+                fetchWithRetry(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`).catch(err => {
+                    console.error(`Fetch error for ID ${id}: ${err.message}`);
+                    return null;
+                })
             );
             const objectDetails = await Promise.all(objectDetailsPromises);
 
             publicObjects = publicObjects.concat(
-                objectDetails.filter(object => object.primaryImage)
+                objectDetails.filter(object => object && object.primaryImage)
             );
 
             if (publicObjects.length > 0) break;
@@ -97,6 +100,30 @@ app.get('/home', async (req, res) => {
 
 app.get('/create-account', (req, res) => {
     res.render('create-account', { errorMessage: null });
+});
+
+app.get('/displayFavorites', async (req, res) => {
+    const username = req.query.user;
+
+    try {
+        await client.connect();
+        const database = client.db('ASTRO-ME_DB');
+        const users = database.collection('userData');
+
+        const user = await users.findOne({ username });
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        console.log(`User ${username}'s favorites:`, user.favorites);
+        res.render('favorites', { username, favorites: user.favorites });
+    } catch (error) {
+        console.error("Error fetching favorites:", error);
+        res.status(500).send("Error occurred while fetching favorites!");
+    } finally {
+        await client.close();
+    }
 });
 
 app.post('/login', async (req, res) => {
@@ -149,8 +176,40 @@ app.post('/create-account', async (req, res) => {
         await users.insertOne(newUser);
         res.redirect(`/home?user=${newUser.username}`);
     } catch (error) {
-        console.error("Error creating accoint: ", error);
+        console.error("Error creating account: ", error);
         res.status(500).send("An error occurred while creating your account!");
+    } finally {
+        await client.close();
+    }
+});
+
+app.post('/addFavorite', async (req, res) => {
+    const username = req.body.username;
+    const { imageURL, imageTitle, imageDescription } = req.body;
+
+    console.log(`Adding to favorites: ${username}`);
+    console.log({
+        imageURL,
+        imageTitle,
+        imageDescription
+    });
+
+    try {
+        await client.connect();
+        const database = client.db('ASTRO-ME_DB');
+        const users = database.collection('userData');
+
+        const updateResult = await users.updateOne(
+            { username },
+            { $addToSet: { favorites: { imageURL, imageTitle, imageDescription } } }
+        );
+        if (updateResult.matchedCount === 0) {
+            return res.status(404).send("User not found");
+        }
+        res.redirect(`/home?user=${username}`);
+    } catch (error) {
+        console.error("Error adding favorite:", error);
+        res.status(500).send("Error occurred while adding favorite!");
     } finally {
         await client.close();
     }
