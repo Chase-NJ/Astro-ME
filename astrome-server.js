@@ -21,34 +21,63 @@ app.get('/', (req, res) => {
     res.render('index', { errorMessage: null });
 });
 
+const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(`Fetch error (${url}): ${error.message}`);
+            if (i < retries - 1) {
+                await new Promise(res => setTimeout(res, delay));
+            } else {
+                throw error;
+            }
+        }
+    }
+};
+
 app.get('/home', async (req, res) => {
     const username = req.query.user;
-    console.log(username);
 
     try {
-        const objectIDResponse = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=Paintings');
-        const objectIDData = await objectIDResponse.json();
-        const objectIDs = objectIDData.objectIDs;
-        console.log(objectIDs);
+        const searchResponse = await fetchWithRetry('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=painting');
+        const searchData = searchResponse;
+        const objectIDs = searchData.objectIDs.slice(0, 1000);
 
-        const random = Math.floor(Math.random() * objectIDs.length);
-        const randomObject = objectIDs[random];
+        const batchSize = 50;
+        let publicObjects = [];
 
-        const artworkResponse = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${randomObject}`);
-        const artworkData = await artworkResponse.json();
+        for (let i = 0; i < objectIDs.length; i += batchSize) {
+            const batchIDs = objectIDs.slice(i, i + batchSize);
+            const objectDetailsPromises = batchIDs.map(id => 
+                fetchWithRetry(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`)
+            );
+            const objectDetails = await Promise.all(objectDetailsPromises);
 
-        console.log("api response: ", artworkData);
+            publicObjects = publicObjects.concat(
+                objectDetails.filter(object => object.primaryImage)
+            );
+
+            if (publicObjects.length > 0) break;
+        }
+
+        const randomIndex = Math.floor(Math.random() * publicObjects.length);
+        let artworkData = publicObjects[randomIndex];
 
         const imageURL = artworkData.primaryImage;
-        const imageTitle = artworkData.title;
-        const imageMedium = artworkData.medium;
-        const imageType = artworkData.objectName
-        const imageDate = artworkData.objectDate;
-        const artistName = artworkData.artistDisplayName;
-        const artistBio = artworkData.artistDisplayBio;
+        const imageTitle = artworkData.title || '(Unknown)';
+        const imageMedium = artworkData.medium || '(Unknown)';
+        const imageType = artworkData.objectName || '(Unknown)';
+        const imageDate = artworkData.objectDate || '(Unknown)';
+        const artistName = artworkData.artistDisplayName || '(Unknown)';
+        const artistBio = artworkData.artistDisplayBio || '(Unknown)';
 
-        const imageDescription = `${imageTitle}, ${imageType} (medium: ${imageMedium}) by ${artistName} (${artistBio}), ${imageDate}`
-        console.log(imageDescription)
+        const imageDescription = `${imageTitle}, ${imageType} (medium: ${imageMedium}) by ${artistName} (${artistBio}), ${imageDate}`;
+        console.log(imageDescription);
         
         await client.connect();
         const database = client.db('ASTRO-ME_DB');
