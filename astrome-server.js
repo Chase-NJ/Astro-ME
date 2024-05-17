@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const readLine = require("readline");
+const portNumber = 5001;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'templates'));
@@ -28,6 +30,24 @@ app.post('/create-account', (req, res) => {
     // Handle account creation
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+app.listen(portNumber, () => {
+    console.log(`Web Server started and running at http://localhost:${portNumber}`);
+    const rl = readLine.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        prompt: `Stop to shutdown the server: `
+    });
+    rl.prompt();
+    rl.on('line', line => {
+        input = line.trim();
+        if (input === 'stop') {
+            console.log(`Shutting down the server`);
+            rl.close();
+        } else {
+            console.log(`Invalid command: ${input}`);
+        }
+        rl.prompt();
+    }).on('close', () => {
+        process.exit(0);
+    })
 });
