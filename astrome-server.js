@@ -74,7 +74,7 @@ app.post('/create-account', async (req, res) => {
             password
         };
         await users.insertOne(newUser);
-        res.render('home', { username: newUser.username });
+        res.redirect(`/home?user=${newUser.username}`);
     } catch (error) {
         console.error("Error creating accoint: ", error);
         res.status(500).send("An error occurred while creating your account!");
