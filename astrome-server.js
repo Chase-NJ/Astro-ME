@@ -46,9 +46,9 @@ app.get('/home', async (req, res) => {
     try {
         const searchResponse = await fetchWithRetry('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=painting');
         const searchData = searchResponse;
-        const objectIDs = searchData.objectIDs.slice(0, 1000);
+        const objectIDs = searchData.objectIDs.slice(0, 5000);
 
-        const batchSize = 50;
+        const batchSize = 250;
         let publicObjects = [];
 
         for (let i = 0; i < objectIDs.length; i += batchSize) {
@@ -73,8 +73,8 @@ app.get('/home', async (req, res) => {
         const imageMedium = artworkData.medium || '(Unknown)';
         const imageType = artworkData.objectName || '(Unknown)';
         const imageDate = artworkData.objectDate || '(Unknown)';
-        const artistName = artworkData.artistDisplayName || '(Unknown)';
-        const artistBio = artworkData.artistDisplayBio || '(Unknown)';
+        const artistName = artworkData.artistDisplayName || '(No Artist Name)';
+        const artistBio = artworkData.artistDisplayBio || '(No Artist Info)';
 
         const imageDescription = `${imageTitle}, ${imageType} (medium: ${imageMedium}) by ${artistName} (${artistBio}), ${imageDate}`;
         console.log(imageDescription);
