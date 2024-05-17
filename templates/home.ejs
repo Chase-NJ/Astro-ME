@@ -5,7 +5,7 @@
     <meta charset = "UTF-8">
     <meta name = "viewport" content = "width = device-width, initial-scale = 1.0">
     <link rel="stylesheet" href="/home.css">
-    <title>AstroMe Home</title>
+    <title>Museum Home</title>
 </head>
 
 <body>
@@ -14,7 +14,30 @@
         <div class="home-box"><h1>Home</h1></div>
         <div class="log-out-box"><a href="/">Log Out</a></div>
     </div>
-    
+    <div class="image-functions">
+        <div class="viewer">
+            <h1><%= imageTitle %></h1>
+            <img src=<%= imageURL %>>
+            <div class="description">
+                <p><%= imageDescription %></p>
+            </div>
+        </div>
+        <div class="generator">
+            <h1>Dashboard</h1>
+            <script>
+                function renderNewImage() {
+                    window.location.href = '/home?user=<%= username %>';
+                }
+            </script>
+            <button class="new-image" onclick="renderNewImage()">Next Exhibit</button>
+            <form action="/addFavorite" method="post">
+                <button type="submit" class="favorite">Favorite ♥</button>
+            </form>
+            <form action="/displayFavorites" method="post">
+                <button type="submit" class="favorite">Display Favorites</button>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>

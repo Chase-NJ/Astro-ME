@@ -72,6 +72,7 @@ body {
 
 .forgot a:hover {
     text-decoration: underline;
+    cursor: pointer;
 }
 
 .login-container .submit-button {
@@ -91,7 +92,6 @@ body {
 
 .login-container .submit-button:hover {
     transform: scale(.95);
-    
 }
 
 .login-container .error-message {
