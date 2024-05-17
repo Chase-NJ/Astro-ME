@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="favorites.css" rel="stylesheet">
     <title>Favorites</title>
 </head>
 <body>
     <div class="user-info-box">
         <div class="welcome-box"><h1><%= username %>'s Favorites</h1></div>
-        <div class="log-out-box"><a href="/">Log Out</a></div>
+        <div class="favorites-box"><h1>Favorites</h1></div>
+        <div class="home-box"><a href="/home?user=<%= username %>">Home</a></div>
     </div>
     <div class="favorites-gallery">
         <% favorites.forEach(favorite => { %>
@@ -19,6 +21,11 @@
                     <div class="description">
                         <p><%= favorite.imageDescription %></p>
                     </div>
+                    <form action="/removeFavorite" method="post">
+                        <input type="hidden" name="username" value="<%= username %>">
+                        <input type="hidden" name="imageURL" value="<%= favorite.imageURL %>">
+                        <button type="submit" class="remove">Remove from Favorites</button>
+                    </form>
                 </div>
             </div>
         <% }); %>

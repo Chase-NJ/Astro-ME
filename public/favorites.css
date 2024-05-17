@@ -10,9 +10,10 @@
 body {
     padding: 25px;
     min-height: 100vh;
-    background: url('home-background.jpg');
-    background-size: cover;
+    background: url('favorites-background.jpg');
+    background-size: 100% auto;
     background-position: center;
+    background-repeat: repeat-y;
 }
 
 .user-info-box {
@@ -48,7 +49,7 @@ body {
     font-weight: 500;
 }
 
-.log-out-box {
+.home-box {
     display: flex;
     width: 33%;
     text-align: center;
@@ -64,12 +65,12 @@ body {
     border-radius: 10px; */
 }
 
-.log-out-box h1 {
+.home-box h1 {
     font-size: 30px;
     font-weight: 500;
 }
 
-.log-out-box a {
+.home-box a {
     margin: 0;
     font-size: 30px;
     font-weight: 500;
@@ -78,11 +79,11 @@ body {
     transition: transform 0.3s ease;
 }
 
-.log-out-box a:hover {
+.home-box a:hover {
     transform: scale(.95);
 }
 
-.home-box {
+.favorites-box {
     display: flex;
     width: 33%;
     text-align: center;
@@ -98,43 +99,65 @@ body {
     border-radius: 10px; */
 }
 
-.home-box h1 {
+.favorites-box h1 {
     margin: 0;
     font-size: 30px;
     font-weight: 500;
 }
 
-.image-functions {
-    margin-top: 2em;
+.favorites-gallery {
     display: flex;
+    flex-direction: column;
+    margin-top: 2em;
     background: transparent;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
     width: 100%;
+    padding: 2em;
 }
 
-.image-functions .viewer {
+
+
+.favorites-gallery .favorite-item {
     color: white;
     justify-content: center;
     align-items: center;
     text-align: center;
     font-size: 20px;
     font-weight: 300;
-    width: 66%;
+    width: 100%;
     background: transparent;
     border: 2px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(30px);
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     border-radius: 15px;
     padding: 1em;
+    margin-bottom: 2em;
 }
 
-.image-functions .viewer h1 {
+.favorites-gallery .favorite-item .viewer h1 {
+    font-size: 25px;
+    font-weight: 300;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.favorites-gallery .favorite-item .viewer .description {
     color: white;
-    font-size: 30px;
-    font-weight: 400;
+    font-size: 20px;
+    font-weight: 300;
+    width: 100%;
+    background: rgba(49, 51, 56, .5);
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 2em;
 }
 
-.image-functions .viewer img {
+.favorites-gallery .favorite-item .viewer img {
     height: 65vh;
     width: 100%;
     object-fit: contain;
@@ -142,70 +165,9 @@ body {
     border-radius: 15px;
 }
 
-.image-functions .generator {
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: white;
-    font-size: 20px;
-    font-weight: 300;
-    width: 30%;
-    background: transparent;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(30px);
-    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
-    border-radius: 15px;
+.favorites-gallery .favorite-item .viewer .remove {
     padding: 1em;
-    height: 33vh;
-}
-
-.image-functions .viewer .description {
-    color: white;
-    font-size: 20px;
-    font-weight: 300;
-    width: 100%;
-    background: rgba(49, 51, 56, .5);
-    border: none;
-    outline: none;
-    border-radius: 15px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    padding: 1em;
-    margin-top: 10px;
-}
-
-.image-functions .generator h1 {
-    text-align: left;
-    color: white;
-    font-size: 30px;
-    font-weight: 400;
-}
-
-.image-functions .generator .new-image {
-    width: 90%;
-    height: 30%;
-    color: white;
-    font-size: 25px;
-    font-weight: 300;
-    margin-top: 1em;
-    border-radius: 15px;
-    padding: 1em;
-    background: rgba(49, 51, 56, .2);
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    backdrop-filter: blur(30px);
-    border-style: none;
-    transition: transform 0.3s ease;
-}
-
-.image-functions .generator .new-image:hover {
-    cursor: pointer;
-    transform: scale(.95);
-}
-
-.image-functions .generator .favorite {
-    padding: 1em;
-    margin-top: 20px;
-    width: 90%;
-    height: 30%;
+    width: 50%;
     background: rgba(49, 51, 56, .5);
     border: none;
     outline: none;
@@ -216,8 +178,9 @@ body {
     color: white;
     font-weight: 300;
     transition: transform 0.3s ease;
+    margin-bottom: 1em;
 }
 
-.image-functions .generator .favorite:hover {
+.favorites-gallery .favorite-item .viewer .remove:hover {
     transform: scale(.95);
 }
