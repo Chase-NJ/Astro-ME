@@ -19,8 +19,8 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/login', (req, res) => {
-    res.render('login');
+app.get('/home', (req, res) => {
+    res.render('home', { username: req.query.user });
 });
 
 app.get('/create-account', (req, res) => {
@@ -42,7 +42,7 @@ app.post('/login', async (req, res) => {
         if (!user) {
             return res.status(401).send("Invalid username or password!");
         }
-        res.render('home', { username: user.username });
+        res.redirect(`/home?user=${user.username}`);
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).send("Error occurred during login!");
