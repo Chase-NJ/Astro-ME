@@ -2,10 +2,11 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const readline = require("readline");
-const portNumber = 5001;
 const { MongoClient } = require('mongodb');
 const https = require('https');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+
+const port = process.env.PORT || 5000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
@@ -241,36 +242,9 @@ app.post('/removeFavorite', async (req, res) => {
 client.connect().then(() => {
     console.log("Connected to MongoDB successfully");
 
-    app.listen(portNumber, () => {
-        console.log(`Web server started and running at http://localhost:${portNumber}`);
-        
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
-
-        console.log('Type "stop" to shutdown the server: ');
-
-        rl.on('line', (input) => {
-            if (input.trim().toLowerCase() === 'stop') {
-                console.log('Shutting down the server');
-                rl.close();
-                client.close().then(() => {
-                    console.log('MongoDB connection closed');
-                    process.exit(0);
-                });
-            } else {
-                console.log(`Invalid command: ${input.trim()}`);
-            }
-        }).on('close', () => {
-            client.close().then(() => {
-                console.log('MongoDB connection closed');
-                console.log('Server has been shut down.');
-                process.exit(0);
-            });
-        });
+    app.listen(port, () => {
+        console.log(`Web server started and running at http://localhost:${port}`);
     });
-
 }).catch(error => {
     console.error("Failed to connect to MongoDB", error);
 });
