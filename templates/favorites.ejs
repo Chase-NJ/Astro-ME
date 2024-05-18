@@ -13,6 +13,15 @@
         <div class="home-box"><a href="/home?user=<%= username %>">Home</a></div>
     </div>
     <div class="favorites-gallery">
+        <% if (favorites.length === 0) { %>
+            <div class="favorite-item">
+                <div class="viewer">
+                    <div class="description">
+                        <p>You currently have no favorited works, try adding some!</p>
+                    </div>
+                </div>
+            </div>
+        <% } %>
         <% favorites.forEach(favorite => { %>
             <div class="favorite-item">
                 <div class="viewer">
