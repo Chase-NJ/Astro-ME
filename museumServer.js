@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
     res.render('index', { errorMessage: null });
 });
 
-const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
+const fetchWithRetry = async (url, retries = 2, delay = 700) => {
     for (let i = 0; i < retries; i++) {
         try {
             const response = await fetch(url);
@@ -41,6 +41,29 @@ const fetchWithRetry = async (url, retries = 3, delay = 1000) => {
     }
 };
 
+const fetchObjects = async (objectIDs) => {
+    const batchSize = 150;
+    let publicObjects = [];
+
+    for (let i = 0; i < objectIDs.length; i += batchSize) {
+        const batchIDs = objectIDs.slice(i, i + batchSize);
+        const objectDetailsPromises = batchIDs.map(id => 
+            fetchWithRetry(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`).catch(err => {
+                console.error(`Fetch error for ID ${id}: ${err.message}`);
+                return null;
+            })
+        );
+        const objectDetails = await Promise.all(objectDetailsPromises);
+
+        publicObjects = publicObjects.concat(
+            objectDetails.filter(object => object && object.primaryImage)
+        );
+
+        if (publicObjects.length > 0) break;
+    }
+    return publicObjects;
+};
+
 app.get('/home', async (req, res) => {
     const username = req.query.user;
 
@@ -51,27 +74,8 @@ app.get('/home', async (req, res) => {
         if (!searchData.objectIDs) {
             throw new Error('No objectIDs found');
         }
-        const objectIDs = searchData.objectIDs.slice(0, 5000);
-
-        const batchSize = 250;
-        let publicObjects = [];
-
-        for (let i = 0; i < objectIDs.length; i += batchSize) {
-            const batchIDs = objectIDs.slice(i, i + batchSize);
-            const objectDetailsPromises = batchIDs.map(id => 
-                fetchWithRetry(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`).catch(err => {
-                    console.error(`Fetch error for ID ${id}: ${err.message}`);
-                    return null;
-                })
-            );
-            const objectDetails = await Promise.all(objectDetailsPromises);
-
-            publicObjects = publicObjects.concat(
-                objectDetails.filter(object => object && object.primaryImage)
-            );
-
-            if (publicObjects.length > 0) break;
-        }
+        const objectIDs = searchData.objectIDs.slice(0, 1000);
+        const publicObjects = await fetchObjects(objectIDs);
 
         const randomIndex = Math.floor(Math.random() * publicObjects.length);
         let artworkData = publicObjects[randomIndex];
@@ -87,19 +91,15 @@ app.get('/home', async (req, res) => {
         const imageDescription = `${imageTitle}, ${imageType} (medium: ${imageMedium}) by ${artistName} (${artistBio}), ${imageDate}`;
         console.log(imageDescription);
         
-        await client.connect();
         const database = client.db('ASTRO-ME_DB');
         const users = database.collection('userData');
 
         const user = await users.findOne({ username });
-        const isFavorited = user && user.favorites.some(favorite => favorite.imageURL === imageURL);
 
-        res.render('home', { username, imageURL, imageTitle, imageDescription, isFavorited });
+        res.render('home', { username, imageURL, imageTitle, imageDescription });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Error occurred while fetching painting!');
-    } finally {
-        await client.close();
     }
 });
 
@@ -111,7 +111,6 @@ app.get('/displayFavorites', async (req, res) => {
     const username = req.query.user;
 
     try {
-        await client.connect();
         const database = client.db('ASTRO-ME_DB');
         const users = database.collection('userData');
 
@@ -125,8 +124,6 @@ app.get('/displayFavorites', async (req, res) => {
     } catch (error) {
         console.error("Error fetching favorites:", error);
         res.status(500).send("Error occurred while fetching favorites!");
-    } finally {
-        await client.close();
     }
 });
 
@@ -137,7 +134,6 @@ app.post('/login', async (req, res) => {
     }
 
     try {
-        await client.connect();
         const database = client.db('ASTRO-ME_DB');
         const users = database.collection('userData');
 
@@ -149,8 +145,6 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).send("Error occurred during login!");
-    } finally {
-        await client.close();
     }
 });
 
@@ -162,7 +156,6 @@ app.post('/create-account', async (req, res) => {
     }
 
     try {
-        await client.connect();
         const database = client.db('ASTRO-ME_DB');
         const users = database.collection('userData');
 
@@ -182,8 +175,6 @@ app.post('/create-account', async (req, res) => {
     } catch (error) {
         console.error("Error creating account: ", error);
         res.status(500).send("An error occurred while creating your account!");
-    } finally {
-        await client.close();
     }
 });
 
@@ -192,7 +183,6 @@ app.post('/addFavorite', async (req, res) => {
     const { imageURL, imageTitle, imageDescription } = req.body;
 
     try {
-        await client.connect();
         const database = client.db('ASTRO-ME_DB');
         const users = database.collection('userData');
 
@@ -207,8 +197,6 @@ app.post('/addFavorite', async (req, res) => {
     } catch (error) {
         console.error("Error adding favorite:", error);
         res.status(500).send("Error occurred while adding favorite!");
-    } finally {
-        await client.close();
     }
 });
 
@@ -217,7 +205,6 @@ app.post('/removeFavorite', async (req, res) => {
     const { imageURL } = req.body;
 
     try {
-        await client.connect();
         const database = client.db('ASTRO-ME_DB');
         const users = database.collection('userData');
 
@@ -234,8 +221,6 @@ app.post('/removeFavorite', async (req, res) => {
     } catch (error) {
         console.error("Error removing favorite:", error);
         res.status(500).send("Error occurred while removing a favorited image!");
-    } finally {
-        await client.close();
     }
 });
 
