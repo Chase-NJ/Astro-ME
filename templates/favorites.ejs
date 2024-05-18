@@ -17,7 +17,7 @@
             <div class="favorite-item">
                 <div class="viewer">
                     <h1><%= favorite.imageTitle %></h1>
-                    <img src="<%= favorite.imageURL %>" alt="<%= favorite.imageTitle %>">
+                    <img src="<%= favorite.imageURL %>" alt="<%= favorite.imageTitle %>" loading="lazy">
                     <div class="description">
                         <p><%= favorite.imageDescription %></p>
                     </div>
@@ -30,6 +30,10 @@
             </div>
         <% }); %>
     </div>
-    <a href="/home?user=<%= username %>">Back to Home</a>
+    <div class="end-of-gallery">
+        <div class="home-link">
+            <a href="/home?user=<%= username %>">Back to Home</a>
+        </div>
+    </div>
 </body>
 </html>
