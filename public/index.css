@@ -88,6 +88,7 @@ body {
     color: white;
     font-weight: 500;
     transition: transform 0.3s ease;
+    margin-bottom: 1em;
 }
 
 .login-container .submit-button:hover {
