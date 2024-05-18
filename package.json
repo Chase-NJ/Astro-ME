@@ -1,8 +1,8 @@
 {
-  "name": "astro-me",
+  "name": "virtual-museum",
   "version": "1.0.0",
-  "description": "Displays APOD",
-  "main": "astrome-server.js",
+  "description": "Simulates virtual museum",
+  "main": "museumServer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

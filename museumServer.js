@@ -46,6 +46,10 @@ app.get('/home', async (req, res) => {
     try {
         const searchResponse = await fetchWithRetry('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=painting');
         const searchData = searchResponse;
+
+        if (!searchData.objectIDs) {
+            throw new Error('No objectIDs found');
+        }
         const objectIDs = searchData.objectIDs.slice(0, 5000);
 
         const batchSize = 250;
@@ -116,7 +120,6 @@ app.get('/displayFavorites', async (req, res) => {
             return res.status(404).send("User not found");
         }
 
-        console.log(`User ${username}'s favorites:`, user.favorites);
         res.render('favorites', { username, favorites: user.favorites });
     } catch (error) {
         console.error("Error fetching favorites:", error);
@@ -187,13 +190,6 @@ app.post('/addFavorite', async (req, res) => {
     const username = req.body.username;
     const { imageURL, imageTitle, imageDescription } = req.body;
 
-    console.log(`Adding to favorites: ${username}`);
-    console.log({
-        imageURL,
-        imageTitle,
-        imageDescription
-    });
-
     try {
         await client.connect();
         const database = client.db('ASTRO-ME_DB');
@@ -210,6 +206,33 @@ app.post('/addFavorite', async (req, res) => {
     } catch (error) {
         console.error("Error adding favorite:", error);
         res.status(500).send("Error occurred while adding favorite!");
+    } finally {
+        await client.close();
+    }
+});
+
+app.post('/removeFavorite', async (req, res) => {
+    const username = req.body.username;
+    const { imageURL } = req.body;
+
+    try {
+        await client.connect();
+        const database = client.db('ASTRO-ME_DB');
+        const users = database.collection('userData');
+
+        const updateResult = await users.updateOne(
+            { username },
+            { $pull: { favorites: { imageURL } } }
+        );
+
+        if (updateResult.matchedCount === 0) {
+            return res.status(404).send("User not found!");
+        }
+        
+        res.redirect(`/displayFavorites?user=${username}`);
+    } catch (error) {
+        console.error("Error removing favorite:", error);
+        res.status(500).send("Error occurred while removing a favorited image!");
     } finally {
         await client.close();
     }
